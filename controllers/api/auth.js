@@ -1,6 +1,6 @@
 const User = require("../../model/users");
 const jwt = require("jsonwebtoken");
-const { sendGoodResponse, sendBadResponse } = require("../../helpers/helper");
+const { sendGoodResponse, sendBadResponse, moveTempFileToPermanentDestination } = require("../../helpers/helper");
 const { validationResult } = require("express-validator");
 const bcrypt = require('bcrypt');
 /**
@@ -177,7 +177,11 @@ module.exports.changeProfile = async (req, res) => {
     const user = await User.findOne({where:{ email: authenticatedUser.email }});
 
     user.name = name;
-    if(req.file) user.image = req.file.originalname;
+    
+    if(req.file){
+      var path = moveTempFileToPermanentDestination(req.file.path, req.file.filename, "public/uploads");
+      user.image = path;
+    }
     await user.save();
    
     return res.send({status: "success", data: await user.reload()});

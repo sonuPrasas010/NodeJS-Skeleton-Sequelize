@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/', getAllCategories);
 router.get('/:categoryId', getCategoryById);
-router.post('/', [
+router.put('/', [
     check("name").notEmpty(),
     check("slug").notEmpty().custom(async (slug)=>{
         if (slug.includes(' ')) {
@@ -19,7 +19,7 @@ router.post('/', [
     }).trim(),
 ] ,createCategory);
 
-router.put('/:categoryId',  [
+router.patch('/:categoryId',  [
     check("name").trim().notEmpty(),
     check("slug").trim().notEmpty().custom(async (slug, { req })=>{
         if (slug.includes(' ')) {

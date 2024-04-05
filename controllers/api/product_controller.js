@@ -1,7 +1,6 @@
 const { validationResult } = require('express-validator');
 const Product = require('../../model/product'); // Adjust the path based on your project structure
-const { sendGoodResponse, sendBadResponse, upload } = require('../../helpers/helper');
-const Color = require('../../model/color');
+const { sendGoodResponse, sendBadResponse, upload, moveTempFileToPermanentDestination } = require('../../helpers/helper');
 const Category = require('../../model/category');
 
 
@@ -34,6 +33,11 @@ const getSingleProduct = async (req, res) => {
   }
 }
 
-const addToCart = (req, res) =>
+const addToCart = (req, res) =>{}
 
-module.exports = { getAllProducts, ge`tSingleProduct }
+const uploadImageForTest= (req, res) => {
+  console.log(req.file);
+  moveTempFileToPermanentDestination(req.file.path, req.file.filename, "public/uploads/")
+}
+
+module.exports = { getAllProducts, getSingleProduct, uploadImageForTest }

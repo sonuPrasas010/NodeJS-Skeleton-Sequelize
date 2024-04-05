@@ -1,7 +1,6 @@
 const { validationResult } = require('express-validator');
 const Product = require('../../model/product'); // Adjust the path based on your project structure
 const { sendGoodResponse, sendBadResponse, upload } = require('../../helpers/helper');
-const Color = require('../../model/color');
 const Category = require('../../model/category'); 
 
 /**

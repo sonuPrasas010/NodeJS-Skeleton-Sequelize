@@ -2,30 +2,12 @@ const express = require('express');
 const router = express.Router();
 
 const authController = require('../../controllers/api/auth');
+const productController = require("../../controllers/api/product_controller")
 const { check } = require('express-validator');
-const { authenticateOptionalJWTForUser } = require('../../middlewares/auth_middleware')
-const multer = require('multer');
-
-// Define storage for uploaded files
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/uploads/'); // Destination folder for uploaded files
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname); // Rename the file to include the timestamp
-  },
-});
-
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image/')) {
-    cb(null, true);
-  } else {
-    cb(new Error('File must be an image'), false);
-  }
-};
-
-// Initialize Multer with the storage configuration
-const upload = multer({ storage: storage, fileFilter: fileFilter });
+const { authenticateOptionalJWTForUser, authenticateJWTForUser } = require('../../middlewares/auth_middleware')
+const helper = require("../../helpers/helper");
+const favrouiteRoute = require("../../routes/api/fav_route")
+const productReviewRoute = require("../../routes/api/product_review_route")
 
 router.post('/google-login', authController.googleLogin)
 router.all('/email-login', [
@@ -45,8 +27,13 @@ router.patch('/change-password', [
   check('confirmPassword').isLength({ min: 5 }),
 ], authController.changePassword)
 
-router.patch('/update-profile', authenticateOptionalJWTForUser, [check('name').notEmpty().trim()], upload.single('image'), authController.changeProfile);
+router.patch('/update-profile', authenticateJWTForUser, [check('name').notEmpty().trim()], helper.upload.single('image'), authController.changeProfile);
 
+router.post("/upload-image",helper.upload.single("image"), productController.uploadImageForTest);
+
+router.use("/favorite", favrouiteRoute);
+
+router.use("/product-review", productReviewRoute);
 
 
 

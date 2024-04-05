@@ -13,7 +13,7 @@ const { adminCategoryRoute } = require('./category_route');
 const { adminProductRoute } = require('./product_route');
 
 
-router.all('/email-login', [
+router.post('/email-login', [
     check('email').isEmail().trim(),
     check('password').isLength({ min: 5 }),
 ], authController.emailLoginAdmin);
@@ -26,7 +26,6 @@ router.all('/change-password', authenticateJWTForAdmin, [
 
 router.use("/categories", authenticateJWTForAdmin, adminCategoryRoute);
 router.use("/products", authenticateJWTForAdmin, adminProductRoute);
-
 
 
 
