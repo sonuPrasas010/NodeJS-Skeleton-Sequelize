@@ -25,6 +25,13 @@ module.exports.authenticateOptionalJWTForUser = async (req, res, next) => {
   }
 };
 
+/**
+ * 
+ * @param {import('express').Request} req 
+ * @param {import('express').Response} res 
+ * @param {import('express').NextFunction} next 
+ * @returns 
+ */
 module.exports.authenticateOptionalJWTForUser = async (req, res, next) => {
   const token = req.header('Authorization');
 
