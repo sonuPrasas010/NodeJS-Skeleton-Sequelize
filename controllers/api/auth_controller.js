@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const { sendGoodResponse, sendBadResponse, moveTempFileToPermanentDestination } = require("../../helpers/helper");
 const { validationResult } = require("express-validator");
 const bcrypt = require('bcrypt');
+const OTP = require("../../model/otp");
 /**
  * 
  * @param {import("express").Request } req 
@@ -64,7 +65,7 @@ module.exports.emailLogin = async (req, res) => {
  * @param {import("express").Request} req 
  * @param {import("express").Response} res 
  */
-module.exports.register = async function (req,res) { 
+module.exports.register = async function (req, res) {
   const result = validationResult(req);
   if (!result.isEmpty()) return sendBadResponse(res, result.array({ onlyFirstError: true }));
 
@@ -76,7 +77,7 @@ module.exports.register = async function (req,res) {
     const existingUser = await User.findOne({ where: { email: email } });
 
     if (existingUser) {
-      return sendBadResponse(res, [{ path: 'email',msg: 'User with this email already exists' }]);
+      return sendBadResponse(res, [{ path: 'email', msg: 'User with this email already exists' }]);
     }
 
     // Hash the password before saving it to the database
@@ -105,7 +106,7 @@ module.exports.register = async function (req,res) {
     console.error('Error during registration:', error);
     return sendBadResponse(res, [{ msg: 'Internal server error' }]);
   }
- }
+}
 
 /**
  * 
@@ -171,23 +172,53 @@ module.exports.changeProfile = async (req, res) => {
 
 
   try {
-  const { name } = req.body;
-  const authenticatedUser = req.user;
+    const { name } = req.body;
+    const authenticatedUser = req.user;
 
-    const user = await User.findOne({where:{ email: authenticatedUser.email }});
+    const user = await User.findOne({ where: { email: authenticatedUser.email } });
 
     user.name = name;
-    
-    if(req.file){
+
+    if (req.file) {
       var path = moveTempFileToPermanentDestination(req.file.path, req.file.filename, "public/uploads");
       user.image = path;
     }
     await user.save();
-   
-    return res.send({status: "success", data: await user.reload()});
+
+    return res.send({ status: "success", data: await user.reload() });
   } catch (error) {
     console.error('Error during profile change:', error);
     return sendBadResponse(res, [{ msg: 'Internal server error', err: error }]);
   }
 };
+
+const sendOtp = async (req, res) => {
+
+}
+
+/**
+ * 
+ * @param {import("express").Request} req 
+ * @param {import("express").Response} res 
+ */
+module.exports.resetPassword = async (req, res) => {
+  const { email, otpCode, newPassword } = req.body;
+
+  try{
+  const otp = await OTP.findOne({ where: { email, otp: otpCode } });
+  if (!otp) {
+    return sendBadResponse(res, { msg: "invalid otp" })
+  }
+  if (otp.used == true) {
+    return sendBadResponse(res, { msg: "already used" });
+  }
+  // also check for expiry date
+
+  const hashedPassword = bcrypt.hashSync(newPassword, 10);
+  let user = await User.update({password: hashedPassword}, {where: {email} });
+  return sendGoodResponse(res, {msg: "password updated successfully"});
+}catch(e){
+  return sendBadResponse(res, {msg: "server error"}, 500);
+}
+}
 

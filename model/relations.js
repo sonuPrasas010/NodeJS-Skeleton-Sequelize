@@ -6,6 +6,7 @@ const Favorite = require('./favourite');
 const ProductReview = require('./product_review');
 const ProductOrder = require('./product_order');
 const ProductOederItems = require('./product_order_items');
+const OTP = require('./otp');
 
 
  
@@ -28,3 +29,7 @@ ProductOrder.belongsTo(User);
 
 ProductOrder.hasMany(ProductOederItems)
 ProductOederItems.belongsTo(ProductOrder)
+
+OTP.belongsTo(User);
+User.hasMany(OTP);
+

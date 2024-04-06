@@ -15,6 +15,6 @@ router.put("/change-status/:orderId", [
     }),
     body("orderStatus").isIn(['pending', "confirmed", "delivered", "cancelled"]),
     body("paymentStatus").isIn(['paid', "unpaid"]),
-], orderController.changeOrderStatus);
+], orderController.changeOrderStatus,);
 
 module.exports.adminOrderRoute = router;
