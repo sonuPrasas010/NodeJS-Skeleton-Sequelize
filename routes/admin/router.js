@@ -8,9 +8,9 @@ const multer = require('multer');
 const { addProduct, addColor, deleteProduct, deleteColor, updateProduct, updateColor, getAllProducts, getSingleProduct } = require('../../controllers/admin/product_controller');
 const Product = require('../../model/product');
 const { Op } = require('sequelize');
-const Category = require('../../model/category');
 const { adminCategoryRoute } = require('./category_route');
 const { adminProductRoute } = require('./product_route');
+const { adminOrderRoute } = require('./order_route');
 
 
 router.post('/email-login', [
@@ -27,6 +27,7 @@ router.all('/change-password', authenticateJWTForAdmin, [
 router.use("/categories", authenticateJWTForAdmin, adminCategoryRoute);
 router.use("/products", authenticateJWTForAdmin, adminProductRoute);
 
+router.use("/order", authenticateJWTForAdmin, adminOrderRoute );
 
 
 

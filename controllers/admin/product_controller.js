@@ -1,6 +1,6 @@
 const { validationResult } = require('express-validator');
 const Product = require('../../model/product'); // Adjust the path based on your project structure
-const { sendGoodResponse, sendBadResponse, upload } = require('../../helpers/helper');
+const { sendGoodResponse, sendBadResponse, upload, moveTempFileToPermanentDestination } = require('../../helpers/helper');
 const Category = require('../../model/category'); 
 
 /**
@@ -29,7 +29,7 @@ const addProduct = async (req, res) => {
       discount,
     } = req.body;
     console.log(req.file);
-    const image = req.file.path;
+    const image = moveTempFileToPermanentDestination(req.file.path, req.file.filename, "public/images");
 
     const newProduct = await Product.create({
       name,
@@ -90,7 +90,7 @@ const updateProduct = async (req, res) => {
     } = req.body;
 
     // If a new image is uploaded, update the image path
-    const image = req.file ? req.file.path : existingProduct.image;
+    const image = req.file ? moveTempFileToPermanentDestination(req.file.path, req.file.fieldname, "public/images") : existingProduct.image;
 
     // Update the existing product
     await existingProduct.update({

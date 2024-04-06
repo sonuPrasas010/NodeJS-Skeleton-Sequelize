@@ -4,6 +4,8 @@ const Category = require('./category');
 const ProductCategory = require('./product_category');
 const Favorite = require('./favourite');
 const ProductReview = require('./product_review');
+const ProductOrder = require('./product_order');
+const ProductOederItems = require('./product_order_items');
 
 
  
@@ -21,3 +23,8 @@ User.hasMany(ProductReview);
 ProductReview.belongsTo(Product);
 ProductReview.belongsTo(User);
 
+User.hasMany(ProductOrder);
+ProductOrder.belongsTo(User);
+
+ProductOrder.hasMany(ProductOederItems)
+ProductOederItems.belongsTo(ProductOrder)
