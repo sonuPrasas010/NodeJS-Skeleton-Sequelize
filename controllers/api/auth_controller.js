@@ -4,6 +4,7 @@ const { sendGoodResponse, sendBadResponse, moveTempFileToPermanentDestination } 
 const { validationResult } = require("express-validator");
 const bcrypt = require('bcrypt');
 const OTP = require("../../model/otp");
+
 /**
  * 
  * @param {import("express").Request } req 
@@ -69,7 +70,7 @@ module.exports.register = async function (req, res) {
   const result = validationResult(req);
   if (!result.isEmpty()) return sendBadResponse(res, result.array({ onlyFirstError: true }));
 
-  const { email, password } = req.body;
+  const { email, password, name, address, image, phone } = req.body;
   const jwtSecretKey = process.env.JWT_SECRET_KEY;
 
   try {
@@ -81,12 +82,15 @@ module.exports.register = async function (req, res) {
     }
 
     // Hash the password before saving it to the database
-    const hashedPassword = await bcrypt.hash(password);
 
     // Create a new user record
     const newUser = await User.create({
       email: email,
-      password: hashedPassword,
+      password: password,
+      name,
+      address,
+      image,
+      phone,
       // Add other user properties as needed
     });
 

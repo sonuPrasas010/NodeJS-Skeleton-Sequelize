@@ -8,7 +8,7 @@ module.exports.authenticateJWTForUser = async (req, res, next) => {
     const token = req.header('Authorization').split(" ")[1];
 
     if (!token) {
-      return res.status(401).json({ msg: 'Unauthorized - No token provided' });
+      return sendBadResponse(res, { msg: 'Unauthorized - No token provided' });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
